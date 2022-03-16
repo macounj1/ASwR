@@ -1,0 +1,36 @@
+---
+title: "Exercise 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We will clone an existing GitHub repository to karolina and run it. Then play with some Unix commands. In order to have your own work version of the repository, you need to fork it on GitHub and then use RSudio to bring to your laptop. After cloning your forked version to karolina you are ready for a working code pipeline from your laptop to the cluster.
+
+## Working over ssh and cloning an existing repository
+
+1. Open a terminal window and login to karolina.it4i.cz 
+2. Clone the GitHub "RBigData/mpi_balance" repository
+   a. Find it on GitHub
+   b. Copy its "clone" url (the green Code button)
+   c. `git clone` paste_url-here
+3. `cd` to your mpi_balance
+4. Use Unix commands to look at the contents
+5. Submit the shell script: `qsub hello_karolina_pbs.sh`
+6. Use Unix commands to look at output files balance.e and balance.o
+
+## Fork a repository and work on it with RStudio
+
+1. Log into your GitHub account
+2. Find the repository "RBigData/mpi_balance" and Fork it to your account
+3. Get its clone url in your forked version
+4. Open yout RSttudio and start a New Project with Version Control using the url
+
+## Replace the cloned version on karolina with your own
+
+1. Delete the RBigData cloned version `rm -rf mpi_balance`
+2. Clone your forked version to karolina
+3. Now you are ready to make changes, commit+push to GitHub, and pull changes to karolina!
+

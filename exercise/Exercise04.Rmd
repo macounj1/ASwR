@@ -1,0 +1,26 @@
+---
+title: "Exercise 4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Use your GitHub ASwR repositories to work in groups
+
+There are several ways to do this. The fastest is to designate one of the repositories as your group repository and add other group members to it as collaborators with sufficient permissions to push to it. When collaborating this way, always remember to `pull` before any editing and then `commit` and `push` fairly often.
+
+There are other ways, some more "git-proper," that involve forking the designated repository to the others and then submitting merge requests. This involves a deeper knowledge of `git` but may be a good exercise if you find it useful to prepare for more formal git collaborations.
+
+## Parallelize some of the serial randomForest functions in rf_cv_mc.r
+
+Only the crossvalidation was parallelized in rf_cv_mc.r. There are three calls to `randomForest()` in rf_cv_mc.r. Parallelize some of them to make the script faster. Use ideas from rf_mc.r.
+
+Use your designated group ASwR repository to collaborate on this and to submit the final result. Create two scripts:
+
+* **EX4.r** with the parallelized R script replacement for rf_cv_mc.r.
+* **EX4.sh** with the submission script configured for your fastest runtime
+
+**Due date**: March 21, AOE time. This should give enough time to discuss any issues at next week's lecture. I will clone and run the scripts on Karolina to evaluate.
+
