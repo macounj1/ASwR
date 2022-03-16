@@ -60,14 +60,14 @@ pred = predict(rf.all, test)
 correct = sum(pred == test$lettr)
 
 mtry = mtry_val[which.min(err)]
-rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)
+#rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)
 ### FH 16.3.2022 18:00
-#rf.out = mclapply(ntree, 
-#                  function(x) randomForest(lettr ~ .,
-#                                           train, ntree=x, mtry = mtry,
-#                                           norm.votes = FALSE),
-#                  mc.cores = nc)
-#rf.all = do.call(combine, rf.out)
+rf.out = mclapply(ntree, 
+                  function(x) randomForest(lettr ~ .,
+                                           train, ntree=x, mtry = mtry,
+                                           norm.votes = FALSE),
+                  mc.cores = nc)
+rf.all = do.call(combine, rf.out)
 ### FH 16.3.2022 18:00
 pred_cv = predict(rf.all, test)
 correct_cv = sum(pred_cv == test$lettr)
