@@ -5,13 +5,14 @@
 #PBS -e rf_cv.e
 #PBS -o rf_cv.o
 
-cd ~/KPMS-IT4I-EX/code
+cd ~/ASwR/code
 pwd
 
 module load R
 echo "loaded R"
 
 time Rscript rf_cv_serial.r
+time Rscript rf_mc.r
 time Rscript rf_cv_mc.r 8
 time Rscript rf_cv_mc.r 16
 time Rscript rf_cv_mc.r 32
