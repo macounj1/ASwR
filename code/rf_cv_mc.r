@@ -48,14 +48,14 @@ err = tapply(unlist(cv_err), cv_pars[, "mtry"], sum)
 pdf(paste0("rf_cv_mc", nc, ".pdf")); plot(mtry_val, err/(n - n_test)); dev.off()
 
 #rf.all = randomForest(lettr ~ ., train, ntree = ntree)
-### FH 16.3.2022 18:00
+### FH 16.3.2022 18:37
 rf.out = mclapply(ntree, 
                   function(x) randomForest(lettr ~ .,
                                            train, ntree=x,
                                            norm.votes = FALSE),
                   mc.cores = nc)
 rf.all = do.call(combine, rf.out)
-### FH 16.3.2022 18:00
+### FH 16.3.2022 18:37
 pred = predict(rf.all, test)
 correct = sum(pred == test$lettr)
 
