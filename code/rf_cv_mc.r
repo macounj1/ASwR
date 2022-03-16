@@ -22,14 +22,14 @@ fold_err = function(i, cv_pars, folds, train) {
   fold = (folds == cv_pars[i, "f"])
   #rf.all = randomForest(lettr ~ ., train[!fold, ], ntree = ntree,
   #                      mtry = mtry, norm.votes = FALSE)
-  ### FH 16.3.2022 18:00
+  ### FH 16.3.2022 18:04
   rf.out = mclapply(ntree, 
                     function(x) randomForest(lettr ~ .,
                                              train, ntree=x, mtry = mtry,
                                              norm.votes = FALSE),
                     mc.cores = nc)
   rf.all = do.call(combine, rf.out)
-  ### FH 16.3.2022 18:00
+  ### FH 16.3.2022 18:04
   
   pred = predict(rf.all, train[fold, ])
   sum(pred != train$lettr[fold])
