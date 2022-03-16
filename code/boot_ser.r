@@ -1,3 +1,4 @@
+#zkouska gitu
 library(boot)
 cd4.rg = function(data, mle) MASS::mvrnorm(nrow(data), mle$m, mle$v)
 cd4.mle = list(m = colMeans(cd4), v = var(cd4))
