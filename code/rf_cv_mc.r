@@ -79,8 +79,11 @@ rf.all = do.call(combine, rf.out)
 
 
 
+#-------------------------------
+#TADY je fandovo
 
-mtry = mtry_val[which.min(err)]
+
+#mtry = mtry_val[which.min(err)]
 #rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)
 ### FH 16.3.2022 18:00
 #rf.out = mclapply(ntree, 
@@ -90,6 +93,16 @@ mtry = mtry_val[which.min(err)]
 #                  mc.cores = nc)
 #rf.all = do.call(combine, rf.out)
 ### FH 16.3.2022 18:00
+#pred_cv = predict(rf.all, test)
+#correct_cv = sum(pred_cv == test$lettr)
+#cat("Proportion Correct: ", correct/n_test, "(mtry = ", floor((ncol(test) - 1)/3),
+#    ") with cv:", correct_cv/n_test, "(mtry = ", mtry, ")\n", sep = "")
+#-----------------------------------
+
+
+
+mtry = mtry_val[which.min(err)]
+rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)
 pred_cv = predict(rf.all, test)
 correct_cv = sum(pred_cv == test$lettr)
 cat("Proportion Correct: ", correct/n_test, "(mtry = ", floor((ncol(test) - 1)/3),
