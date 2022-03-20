@@ -49,15 +49,35 @@ pdf(paste0("rf_cv_mc", nc, ".pdf")); plot(mtry_val, err/(n - n_test)); dev.off()
 
 #rf.all = randomForest(lettr ~ ., train, ntree = ntree)
 ### FH 16.3.2022 18:37
-rf.out = mclapply(ntree, 
-                  function(x) randomForest(lettr ~ .,
-                                           train, ntree=x,
-                                           norm.votes = FALSE),
-                  mc.cores = nc)
-rf.all = do.call(combine, rf.out)
+#rf.out = mclapply(ntree, 
+ #                 function(x) randomForest(lettr ~ .,
+#                                           train, ntree=x,
+#                                           norm.votes = FALSE),
+#                  mc.cores = nc)
+#rf.all = do.call(combine, rf.out)
 ### FH 16.3.2022 18:37
-pred = predict(rf.all, test)
-correct = sum(pred == test$lettr)
+#pred = predict(rf.all, test)
+#correct = sum(pred == test$lettr)
+
+#----------------------------
+#Jara zkousi
+
+ntree_new = lapply(splitIndices(200, nc), length)
+rf = function(x) randomForest(lettr ~ ., train, ntree=x, norm.votes = FALSE)
+rf.out = mclapply(ntree_new, rf, mc.cores = nc)
+rf.all = do.call(combine, rf.out)
+
+#----------------------------
+
+
+
+
+
+
+
+
+
+
 
 mtry = mtry_val[which.min(err)]
 #rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)
