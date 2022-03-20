@@ -63,10 +63,18 @@ pdf(paste0("rf_cv_mc", nc, ".pdf")); plot(mtry_val, err/(n - n_test)); dev.off()
 #----------------------------
 #Jara zkousi
 
-ntree_new = lapply(splitIndices(200, nc), length)
-rf = function(x) randomForest(lettr ~ ., train, ntree=x, norm.votes = FALSE)
-rf.out = mclapply(ntree_new, rf, mc.cores = nc)
-rf.all = do.call(combine, rf.out)
+#ntree_new = lapply(splitIndices(200, nc), length)
+#rf = function(x) randomForest(lettr ~ ., train, ntree=x, norm.votes = FALSE)
+#rf.out = mclapply(ntree_new, rf, mc.cores = nc)
+#rf.all = do.call(combine, rf.out)
+
+#puvodni cast kodu 
+rf.all = randomForest(lettr ~ ., train, ntree = ntree)
+pred = predict(rf.all, test)
+correct = sum(pred == test$lettr)
+
+
+#konci jaruv kod klidne si ho zakomentujte
 
 #----------------------------
 
