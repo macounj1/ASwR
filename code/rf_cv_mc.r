@@ -33,9 +33,28 @@ system.time({
 })
 pdf(paste0("rf_cv_mc", nc, ".pdf")); plot(mtry_val, err/(n - n_test)); dev.off()
 
-rf.all = randomForest(lettr ~ ., train, ntree = ntree)
-pred = predict(rf.all, test)
-correct = sum(pred == test$lettr)
+
+
+#------------------------
+#puvodni neparalelizovana cast druheho stromu
+#rf.all = randomForest(lettr ~ ., train, ntree = ntree)
+#pred = predict(rf.all, test)
+#correct = sum(pred == test$lettr)
+
+
+
+#---------------------------
+#Jara moje paralelizace
+ntree_new = lapply(splitIndices(200, nc), length)
+rf = function(x) randomForest(lettr ~ ., train, ntree=x, norm.votes = FALSE)
+rf.out = mclapply(ntree_new, rf, mc.cores = nc)
+rf.all = do.call(combine, rf.out)
+
+
+
+#----------------------------
+
+
 
 mtry = mtry_val[which.min(err)]
 rf.all = randomForest(lettr ~ ., train, ntree = ntree, mtry = mtry)
