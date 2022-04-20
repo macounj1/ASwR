@@ -1,3 +1,4 @@
+
 #' svdmod
 #' 
 #' Computes SVD for each image label in training data
@@ -101,16 +102,17 @@ source("../mnist/mnist_read.R")
 ## set up cv parameters
 
 
-nfolds = 2
-pars = seq(80.0, 95, 5) ## par values to fit
-index_pars=comm.chunk(length( seq(80.0, 95, 5)), form = "vector")
-comm.cat( index_pars,"indexpars", "\n",all.rank=TRUE)
+nfolds = 10
+pars = seq(80.0, 95, 1) ## par values to fit
+
+
 my.rank <- comm.rank()
 
 
 
 folds = sample( rep_len(1:nfolds, nrow(train)), nrow(train) ) ## random folds
-cv = expand.grid(par = pars[index_pars], fold = 1:nfolds)  ## all combinations
+cv = expand.grid(par = pars, fold = 1:nfolds)  ## all combinations
+my_index = comm.chunk(nrow(cv), form = "vector")
 
 ranks = comm.size()
 #msg = paste0("Hello World! My name is Empi", my.rank,
@@ -122,6 +124,28 @@ ranks = comm.size()
 
 #------------------------------------------------------------------------
 #jara zkousi programovat cv
+
+#n = nrow(train)
+#n_test = nrow(test)
+#my_trees = comm.chunk(512)
+#my_test_rows = comm.chunk(nrow(test), form = "vector")
+
+#my_rf = randomForest(train, y = train_lab, ntree = my_trees, norm.votes = FALSE)
+#all_rf = allgather(my_rf)
+#all_rf = do.call(combine, all_rf)
+
+#my_pred = as.vector(predict(all_rf, test[my_test_rows, ]))
+
+#correct = reduce(sum(my_pred == test_lab[my_test_rows]))
+#comm.cat("Proportion Correct:", correct/n_test, "\n")
+
+#finalize()
+
+
+
+
+
+
 
 
 
@@ -139,27 +163,31 @@ fold_err = function(i, cv, folds, train) {
 }
 
 ## apply fold_err() over parameter combinations
-comm.print(cv, all.rank = TRUE)
+comm.print(my_index)
 
-d=as.array(1:nrow(cv))
+d=as.array(my_index)
 
+
+comm.print("preslo to pred apply",my.rank,all.rank = TRUE)
 cv_err = apply(d, 1,fold_err, cv = cv, folds = folds, train = train)
+comm.print("preslo to za apply",my.rank,all.rank = TRUE)
+
 
 cv_err_par = tapply(unlist(cv_err), cv[, "par"], sum)
 
-indexes_pars <- unlist(allgather(index_pars))
+
 cv_err_par_colect <- unlist(allgather(cv_err_par))
 ## plot cv curve with loess smoothing (ggplot default)
+comm.print(cv_err_par)
 
-
-pdf("Crossvalidation_HW8.pdf")
-ggplot(data.frame(pct = pars[indexes_pars], error = cv_err_par_colect/nrow(train)), 
-aes(pct, error)) + geom_point() + geom_smooth() +
-labs(title = "Loess smooth with 95% CI of crossvalidation")
+pdf("Crossvalidation.pdf")
+ggplot(data.frame(pct = pars, error = cv_err_par_colect/nrow(train)), 
+       aes(pct, error)) + geom_point() + geom_smooth() +
+  labs(title = "Loess smooth with 95% CI of crossvalidation")
 dev.off()
 
 
-comm.print(pars[indexes_pars])
+
 comm.print(cv_err_par_colect)
 ## End CV
 
