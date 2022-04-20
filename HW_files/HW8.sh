@@ -2,8 +2,8 @@
 #PBS -N mnist_svd_cv
 #PBS -l select=2:mpiprocs=64,walltime=00:12:00
 #PBS -q qexp
-#PBS -e mnist_svd_cv.e
-#PBS -o mnist_svd_cv.o
+#PBS -e hw8.e
+#PBS -o hw8.o
 cd ~/ASwR/HW_files
 
 pwd
