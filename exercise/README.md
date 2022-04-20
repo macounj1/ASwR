@@ -1,1 +1,0 @@
-Exercise assignments will be posted in this directory.
