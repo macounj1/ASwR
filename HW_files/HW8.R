@@ -1,4 +1,3 @@
-
 #' svdmod
 #' 
 #' Computes SVD for each image label in training data
@@ -86,12 +85,15 @@ model_report = function(models, kplot = 0) {
   }
 }
 
+
+
+suppressMessages(library(pbdIO))
+suppressMessages(library(pbdMPI))
 library(parallel)
 library(ggplot2)
 source("../mnist/mnist_read.R")
 
-suppressMessages(library(pbdIO))
-suppressMessages(library(pbdMPI))
+
 
 
 
@@ -116,33 +118,10 @@ ranks = comm.size()
 #cat(msg, "\n")
 
 
-k <- comm.chunk(length( seq(80.0, 95, 5)))
-comm.cat( my.rank, "my rank is:", k, "\n", all.rank = TRUE)
+
 
 #------------------------------------------------------------------------
 #jara zkousi programovat cv
-
-#n = nrow(train)
-#n_test = nrow(test)
-#my_trees = comm.chunk(512)
-#my_test_rows = comm.chunk(nrow(test), form = "vector")
-
-#my_rf = randomForest(train, y = train_lab, ntree = my_trees, norm.votes = FALSE)
-#all_rf = allgather(my_rf)
-#all_rf = do.call(combine, all_rf)
-
-#my_pred = as.vector(predict(all_rf, test[my_test_rows, ]))
-
-#correct = reduce(sum(my_pred == test_lab[my_test_rows]))
-#comm.cat("Proportion Correct:", correct/n_test, "\n")
-
-#finalize()
-
-
-
-
-
-
 
 
 
@@ -163,25 +142,29 @@ fold_err = function(i, cv, folds, train) {
 comm.print(cv, all.rank = TRUE)
 
 d=as.array(1:nrow(cv))
+
 cv_err = apply(d, 1,fold_err, cv = cv, folds = folds, train = train)
 
 cv_err_par = tapply(unlist(cv_err), cv[, "par"], sum)
 
-indexes_pars <- unlist(gather(index_pars))
-cv_err_par_colect <- unlist(gather(cv_err_par))
+indexes_pars <- unlist(allgather(index_pars))
+cv_err_par_colect <- unlist(allgather(cv_err_par))
 ## plot cv curve with loess smoothing (ggplot default)
+
 
 pdf("Crossvalidation.pdf")
 ggplot(data.frame(pct = pars[indexes_pars], error = cv_err_par_colect/nrow(train)), 
-       aes(pct, error)) + geom_point() + geom_smooth() +
-  labs(title = "Loess smooth with 95% CI of crossvalidation")
+aes(pct, error)) + geom_point() + geom_smooth() +
+labs(title = "Loess smooth with 95% CI of crossvalidation")
 dev.off()
+
+
 comm.print(pars[indexes_pars])
 comm.print(cv_err_par_colect)
 ## End CV
 
 ## recompute with optimal pct
-if(comm.rank() == 0) { models = svdmod(train, train_lab, pct = 85)
+if(comm.rank() == 1) { models = svdmod(train, train_lab, pct = 85)
 pdf("BasisImages.pdf")
 model_report(models, kplot = 9)
 dev.off()
