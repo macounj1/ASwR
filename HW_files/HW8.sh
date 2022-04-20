@@ -5,7 +5,7 @@
 #PBS -e mnist_svd_cv.e
 #PBS -o mnist_svd_cv.o
 
-cd ~/ASwR/HW files
+cd ~/ASwR/HW_files
 pwd
 
 module load R
