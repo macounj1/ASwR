@@ -1,0 +1,31 @@
+---
+title: "Exercise 7"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Improve the prediction function in `mnist/mnist_svd.R`
+
+The prediction function below runs almost 6 minutes with OpenBLAS on 8 cores. It's outer loop takes a single image to classify across all 10 models. Remove the outer for loop and use a matrix of images to predict simultaneously with each of the 10 models. What is the optimal number of cores for this faster version?
+```{r eval=FALSE}
+predict_svdmod = function(test, models) {
+  np = nrow(test)
+  pred = rep(NA, np)
+  mnames = names(models)
+  mloss = setNames(vector("double", length(models)), mnames)
+  
+  for(i in 1:np) {
+    y = as.numeric(test[i, ])
+    for(m in mnames) {
+      vt = models[[m]]$vt
+      yhat = t(vt) %*% vt %*% y # memory for compute: precompute t(vt)%*%vt
+      mloss[m] = sum((y - yhat)^2)/length(y)
+    }
+    pred[i] = mnames[which.min(mloss)]
+  }
+  pred
+}
+```
+Note that the `mnist_read.R` function was updated for read-only access so it can be accessed by more than one user at a time.

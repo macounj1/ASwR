@@ -1,0 +1,71 @@
+---
+title: "Exercise 7"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Improve the prediction function in `mnist/mnist_svd.R`
+
+The prediction function below runs almost 6 minutes with OpenBLAS on 8 cores. It's outer loop takes a single image to classify across all 10 models. Remove the outer for loop and use a matrix of images to predict simultaneously with each of the 10 models. What is the optimal number of cores for this faster version?
+```{r eval=FALSE}
+predict_svdmod = function(test, models) {
+  np = nrow(test)
+  pred = rep(NA, np)
+  mnames = names(models)
+  mloss = setNames(vector("double", length(models)), mnames)
+  
+  for(i in 1:np) {
+    y = as.numeric(test[i, ])
+    for(m in mnames) {
+      vt = models[[m]]$vt
+      yhat = t(vt) %*% vt %*% y # memory for compute: precompute t(vt)%*%vt
+      mloss[m] = sum((y - yhat)^2)/length(y)
+    }
+    pred[i] = mnames[which.min(mloss)]
+  }
+  pred
+}
+```
+Note that the `mnist_read.R` function was updated for read-only access (`flags="H5F_ACC_RDONLY"`) so it can be accessed by more than one user at a time.
+
+#### Solution
+
+```{r eval = FALSE}
+predict_svdmod = function(test, models) {
+  np = nrow(test)
+  pred = rep(NA, np)
+  mnames = names(models)
+  mloss = matrix(NA, nrow = np, ncol = length(mnames))
+  colnames(mloss) = mnames
+  
+  y = as.matrix(test)   ## removed loop and set y as matrix
+  for(m in mnames) {
+    vt = models[[m]]$vt
+    yhat = y %*% t(vt) %*% vt  ## transpose of t(vt) %*% vt %*% y
+    mloss[, m] = rowSums((y - yhat)^2)/ncol(y) ## rowSums instead of sum
+  }
+  pred = apply(mloss, 1, function(x) mnames[which.min(x)]) ## apply over rows
+  pred
+}
+```
+* The `i` loop was removed and `y = as.matrix(test)` is now a *10 000* $\times$ *784* matrix.  
+* `yhat = y %*% t(vt) %*% vt` is the transpose of previous computation to avoid transposing $y$
+* `yhat` is the projection of `y` onto the basis vectors `vt`
+* `pred` applies the `which.min()` function to all `mloss` rows to classify
+
+Benchmark results from running the code on 1 through 128 cores:
+```{r echo = FALSE}
+cores = c(1, 2, 4, 8, 16, 32, 64, 128)
+svd = c(10.3, 8.5, 7.8, 8.8, 11.3, 19.3, 42.8, 324.6)
+pred = c(1.13, .94, .79, .79, .78, .80, .82, .94)
+names(svd) = cores
+names(pred) = cores
+knitr::kable(rbind(svd, pred))
+```
+Looks like running on 4 cores is best.
+
+After setting both computations to 4 cores, the total time for the `mnist_svd_mv.R` script is about 23 seconds. This includes reading the data (9 seconds) and plotting the first 9 basis vector images for all 10 models. So reading the data takes about the same amount of time as the SVD and prediction together.
+
+In this case, adding cores did not help nearly as much as organizing the computation more efficiently. The prediction function went from about 6 minutes down to under 1 second, about a 360x speedup!
