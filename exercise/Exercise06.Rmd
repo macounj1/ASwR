@@ -1,0 +1,20 @@
+---
+title: "Exercise 6 (there is no 5)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Show how to use the SVD to solve the least squares problem posed on page 11 in Lecture 6.
+
+## Plot a few digit images from the MNIST data
+
+The directory `mnist` has `mnist_read.R` file that reads the MNIST data.
+
+Plot a few digits from the data set, possibly using the `image()` function, or something from the `ggplot2` package
+
+NOTE: new version of `mnist_read.R` adds a flag to allow simultaneous access to the MNIST file. Previous version was assuming read-write access and that locks the file for everyone else while in use. The new version has read-only access.
+
+This is a file example of the need for locks with shared resources, like we talked about in shared memory.

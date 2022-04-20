@@ -1,0 +1,19 @@
+---
+title: "Exercise 8"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Use crossvalidation and MPI parallelism to optimize `pct` in `mnist/mnist_svd_mv.R`
+
+`pct` is the parameter that controls the percentage of variability captured by the SVD basis functions for each image kind. Currently, this is set at 95% and the resulting test data classification error is a little under 9% (proportion correct 0.9121).
+
+The random forest code runs an error rate under 3% on the MNIST data (see updated `mnist/mnist_rf.R` and `mnist/mnist_rf.sh`). Can we optimize the SVD model to get close?
+
+The crossvalidation should be done on the `svdmod()` function call by dividing the *train* data into 10 random folds, training on 9 folds and predicting (with `predict_svdmod()`) the fold left out, just like we did in the `rf_cv_mc.r` code. Find the optimum among `pct = seq(85, 95, 0.2)` values. This gives 1000 independent computations for parallel treatment. 
+
+I will have more direction later but at first, limit your MPI computation to 2 nodes. We will discuss more MPI concepts and examples in the March 6 Lecture 8.
+
+Due date is Thursday, April 21 (AoE). As last time, each group name your R code in your ASwR repository as EX8.R and its shell script as EX8.sh. Email me at *gostrouc@utk.edu* which repository represents your group.

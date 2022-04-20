@@ -1,0 +1,66 @@
+---
+title: "Test 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Test results for the original file with cross-validation used during the exercise class and new file created during
+the homework. Real times from rf_cv.e and outputs from rf_cv.o are presented.
+
+Original file: 
+
+real times
+32c  47.38s
+64c  35.15s
+128c  28.26s
+
+Running with 32 cores
+   user  system elapsed
+948.209   6.317  33.929
+null device
+          1
+Proportion Correct: 0.96475(mtry = 5) with cv:0.96375(mtry = 4)
+Running with 64 cores
+    user   system  elapsed
+1026.153   15.146   21.733
+null device
+          1
+Proportion Correct: 0.96475(mtry = 5) with cv:0.96675(mtry = 3)
+Running with 128 cores
+    user   system  elapsed
+1110.127   26.256   14.846
+null device
+          1
+Proportion Correct: 0.96475(mtry = 5) with cv:0.96375(mtry = 4)
+
+
+
+
+Updated file:
+
+real times
+32c  42.58s
+64c  30.28s
+128c  24.95s
+
+Running with 32 cores
+   user  system elapsed
+945.303   6.312  34.330
+null device
+          1
+Proportion Correct: 0.9665(mtry = 5) with cv:0.9665(mtry = 4)
+Running with 64 cores
+    user   system  elapsed
+1030.442   16.576   21.822
+null device
+          1
+Proportion Correct: 0.964(mtry = 5) with cv:0.965(mtry = 3)
+Running with 128 cores
+    user   system  elapsed
+1123.533   30.356   15.621
+null device
+          1
+Proportion Correct: 0.96375(mtry = 5) with cv:0.96225(mtry = 4)
